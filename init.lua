@@ -125,8 +125,10 @@ require('lazy').setup({
       -- See `:help lualine.txt`
       opts = {
         options = {
-          icons_enabled = false,
-          theme = 'onedark',
+          icons_enabled = true,
+          theme = 'onedark', -- Green colors look better
+          -- theme = 'catppuccin', -- It will pick up the flavor automatically
+          -- theme = vim.g.colors_name,
           component_separators = '|',
           section_separators = '',
         },
