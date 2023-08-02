@@ -3,7 +3,7 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Disable unnecessary builin plugins:
+-- Disable unnecessary builtin plugins:
 require('disable_plugins')
 
 -- Install package manager
@@ -42,18 +42,6 @@ require('lazy').setup({
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
-  {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-      "MunifTanjim/nui.nvim",
-    },
-    keys = {
-      {"<leader>n", "<cmd>Neotree toggle<CR>", desc="Neotree toggle (cwd)" }
-    }
-  },
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
@@ -67,7 +55,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -105,21 +93,14 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
       on_attach = function(bufnr)
-        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk, { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
+        vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk,
+          { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
         vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk, { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
         vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
       end,
     },
   },
 
-  {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
-    priority = 1000,
-    config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
-  },
 
   {
     -- Set lualine as statusline
@@ -147,7 +128,7 @@ require('lazy').setup({
   },
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  { 'numToStr/Comment.nvim',         opts = {} },
 
   -- Fuzzy Finder (files, lsp, etc)
   { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = { 'nvim-lua/plenary.nvim' } },
@@ -186,7 +167,7 @@ require('lazy').setup({
   --    Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --
   --    For additional information see: https://github.com/folke/lazy.nvim#-structuring-your-plugins
-  -- { import = 'custom.plugins' },
+  { import = 'plugins' },
 }, {})
 
 -- [[ Setting options ]]
@@ -196,16 +177,18 @@ require('lazy').setup({
 -- vim.wo means "Windows options"
 vim.o.hlsearch = false -- Highlight all matches when searching
 
-vim.wo.number = true
-vim.wo.relativenumber = true
-vim.o.mouse = 'a' -- Enable mouse
+-- vim.wo.number = true -- WHY WINDOW OPTION HERE???
+-- vim.wo.relativenumber = true
+vim.o.number = true
+vim.o.relativenumber = true
+vim.o.mouse = 'a'               -- Enable mouse
 vim.o.clipboard = 'unnamedplus' -- Sync with OS clipboard (:help clipboard)
 vim.o.breakindent = true
-vim.o.undofile = true -- Save undo history (default undodir: ~/.local/state/nvim/undo )
+vim.o.undofile = true           -- Save undo history (default undodir: ~/.local/state/nvim/undo )
 vim.o.ignorecase = true
-vim.o.smartcase = true -- Case-insensitive searching UNLESS \C or capital in search
-vim.wo.signcolumn = 'yes' -- I guess signcolumn is used by gitsigns?
-vim.o.updatetime = 250 -- Reduce ms to wait for trigger an event
+vim.o.smartcase = true          -- Case-insensitive searching UNLESS \C or capital in search
+vim.wo.signcolumn = 'yes'       -- I guess signcolumn is used by gitsigns?
+vim.o.updatetime = 250          -- Reduce ms to wait for trigger an event
 vim.o.timeoutlen = 300
 -- Better completion:
 --  menuone: shows menu even when there is only 1 match
@@ -217,9 +200,9 @@ vim.o.termguicolors = true -- 24-bit RGB color for the terminal
 -- vim.o.swapfile = false -- Don't use swapfile
 -- vim.o.showmatch = true        -- Highlight matching parenthesis
 -- vim.o.foldmethod = 'marker'   -- Enable folding (default 'foldmarker')
-vim.o.colorcolumn = '100'      -- Line lenght marker at 80 columns
-vim.o.splitright = true       -- Vertical split to the right
-vim.o.splitbelow = true       -- Horizontal split to the bottom
+vim.o.colorcolumn = '100' -- Line lenght marker at 80 columns
+vim.o.splitright = true   -- Vertical split to the right
+vim.o.splitbelow = true   -- Horizontal split to the bottom
 -- vim.o.linebreak = true        -- Wrap on word boundary
 -- vim.o.laststatus=3            -- Set global statusline
 -- vim.o.expandtab = true        -- Use spaces instead of tabs
@@ -231,6 +214,37 @@ vim.o.splitbelow = true       -- Horizontal split to the bottom
 -- vim.o.history = 100           -- Remember N lines in history
 -- vim.o.lazyredraw = true       -- Faster scrolling
 -- vim.o.synmaxcol = 240         -- Max column for syntax highlight
+--
+-- SET CLIPBOARD FOR WSL
+-- To install win32yank:  `scoop install win32yank`
+vim.api.nvim_exec(
+  [[
+  let g:clipboard = {
+  \ 'name': 'win32yank-wsl',
+  \   'copy': {
+  \      '+': 'win32yank.exe -i --crlf',
+  \      '*': 'win32yank.exe -i --crlf',
+  \    },
+  \   'paste': {
+  \      '+': 'win32yank.exe -o --lf',
+  \      '*': 'win32yank.exe -o --lf',
+  \   },
+  \   'cache_enabled': 0,
+  \ }
+]],
+  true
+)
+
+-- ALTERNATIVE WAY TO SET CLIPBOARD IN WSL
+-- if vim.fn.has('wsl') == 1 then
+--   vim.api.nvim_create_autocmd('TextYankPost', {
+--     group = vim.api.nvim_create_augroup('Yank', { clear = true }),
+--     callback = function()
+--       vim.fn.system('clip.exe', vim.fn.getreg('"'))
+--     end,
+--   })
+-- end
+
 
 -- [[ Basic Keymaps ]]
 
@@ -292,7 +306,8 @@ end, { desc = '[/] Fuzzily search in current buffer' })
 vim.keymap.set('n', '<C-p>', require('telescope.builtin').git_files, { desc = 'Search Git files' })
 vim.keymap.set('n', '<leader>f', require('telescope.builtin').find_files, { desc = 'Search [F]iles' })
 vim.keymap.set('n', '<leader>H', require('telescope.builtin').help_tags, { desc = 'Search [H]elp' })
-vim.keymap.set('n', '<leader>*', require('telescope.builtin').grep_string, { desc = 'Search word under cursor in multiple files' })
+vim.keymap.set('n', '<leader>*', require('telescope.builtin').grep_string,
+  { desc = 'Search word under cursor in multiple files' })
 vim.keymap.set('n', '<leader>g', require('telescope.builtin').live_grep, { desc = 'Search with [G]rep' })
 vim.keymap.set('n', '<leader>D', require('telescope.builtin').diagnostics, { desc = 'Search [D]iagnostics' })
 
@@ -509,6 +524,11 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
+
+-- DEFAULT COLORSCHEME
+-- Configuration needs to be added before setting the colorscheme
+vim.cmd.colorscheme 'catppuccin'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
