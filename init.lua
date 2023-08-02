@@ -26,11 +26,6 @@ vim.opt.rtp:prepend(lazypath)
 -- USE vim.o to just get variables and print them. Use vim.opt to access other methods in the metatable
 -- print('Current run time path: ' .. vim.o.runtimepath)
 
---  You can configure plugins using the `config` key.
---
---  You can also configure plugins after the setup call,
---    as they will be available in your neovim runtime.
---
 -- NOTE: lazy.nvim doesn't support reloading your conf (source %).
 -- When adding "keys" you may need to reopen nvim to apply changes
 require('lazy').setup({
@@ -44,7 +39,6 @@ require('lazy').setup({
   -- checker = { enabled = true }, -- automatically check for plugin updates
   performance = {
     rtp = {
-      -- disable some rtp plugins
       disabled_plugins = require('disable_plugins')
     },
   },
@@ -190,24 +184,8 @@ require('lazy').setup({
   }
 })
 
-
--- [[ Basic Keymaps ]]
-
--- Keymaps for better default experience
--- See `:help vim.keymap.set()`
-vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
-
-vim.keymap.set('i', 'jk', "<Esc>", { silent = true })
-
--- Move between windows
-vim.keymap.set('n', '<leader>h', '<C-w>h', { silent = true })
-vim.keymap.set('n', '<leader>j', '<C-w>j', { silent = true })
-vim.keymap.set('n', '<leader>k', '<C-w>k', { silent = true })
-vim.keymap.set('n', '<leader>l', '<C-w>l', { silent = true })
-
--- Remap for dealing with word wrap
-vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+-- ADD CUSTOM KEYMAPPINGS
+require('keymaps')
 
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
