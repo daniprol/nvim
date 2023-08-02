@@ -2,14 +2,15 @@
 -- -- Disable builtin plugins
 local disabled_built_ins = {
    "2html_plugin",
+   "tohtml",
    "getscript",
    "getscriptPlugin",
    "gzip",
    "logipat",
---   "netrw",
---   "netrwPlugin",
---   "netrwSettings",
---   "netrwFileHandlers",
+   --   "netrw",
+   --   "netrwPlugin",
+   --   "netrwSettings",
+   --   "netrwFileHandlers",
    "matchit",
    "tar",
    "tarPlugin",
@@ -29,6 +30,8 @@ local disabled_built_ins = {
 }
 
 
-for _, plugin in pairs(disabled_built_ins) do
-   vim.g["loaded_" .. plugin] = 1
-end
+-- for _, plugin in pairs(disabled_built_ins) do
+--    vim.g["loaded_" .. plugin] = 1
+-- end
+
+return disabled_built_ins

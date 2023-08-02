@@ -17,7 +17,12 @@ return {
   -- catppuccin
   {
     "catppuccin/nvim",
-    lazy = true,
+    -- Set priority and lazy = false to the default colorscheme
+    lazy = false,
+    priority = 1000,
+    config = function()
+      vim.cmd.colorscheme 'catppuccin'
+    end,
     name = "catppuccin",
     opts = {
       integrations = {
