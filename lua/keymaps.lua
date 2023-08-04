@@ -6,6 +6,9 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 vim.keymap.set('i', 'jk', "<Esc>", { silent = true })
 
+-- Unindent with <S-Tab>
+vim.keymap.set('i', '<S-Tab>', "<C-d>", { silent = true })
+
 -- Move between windows
 vim.keymap.set('n', '<leader>h', '<C-w>h', { silent = true })
 vim.keymap.set('n', '<leader>j', '<C-w>j', { silent = true })

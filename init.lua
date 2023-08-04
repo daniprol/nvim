@@ -19,6 +19,8 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath,
   }
 end
+
+
 -- print('Adding lazy to path: ' .. lazypath)
 vim.opt.rtp:prepend(lazypath)
 -- :lua print(vim.inspect(vim.api.nvim_list_runtime_paths()))
@@ -64,6 +66,7 @@ require('lazy').setup({
 
         -- Useful status updates for LSP
         -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
+        -- Add event = "LspAttach"  if you want the plugin to load on that event
         { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
 
         -- Additional lua configuration, makes nvim stuff amazing!
@@ -114,7 +117,6 @@ require('lazy').setup({
 
 
     {
-      -- Set lualine as statusline
       'nvim-lualine/lualine.nvim',
       -- See `:help lualine.txt`
       opts = {
@@ -135,11 +137,17 @@ require('lazy').setup({
       -- Enable `lukas-reineke/indent-blankline.nvim`
       -- See `:help indent_blankline.txt`
       opts = {
-        char = '┊',
+        -- char = '┊',
+        show_current_context = true,
+        show_current_context_start = false,
         show_trailing_blankline_indent = false,
+        -- char_highlight_list = { 'IndentBlanklineIndent1' },
+        -- char_highlight_list = { '56' },
+        -- vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID "Whitespace"), "fg", "gui"),
+        filetype_exclude = { 'help', 'nvimtree', 'dashboard', 'neo-tree' },
+        buftype_exclude = { 'terminal', 'nofile', 'quickfix' },
       },
     },
-
     -- "gc" to comment visual regions/lines
     { 'numToStr/Comment.nvim',         opts = {} },
 
@@ -211,12 +219,13 @@ require('telescope').setup {
   },
 }
 
+
 -- Enable telescope fzf native, if installed
 pcall(require('telescope').load_extension, 'fzf')
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
-vim.keymap.set('n', '<leader>b', require('telescope.builtin').buffers, { desc = 'Find existing [B]uffers' })
+-- vim.keymap.set('n', '<leader>b', require('telescope.builtin').buffers, { desc = 'Find existing [B]uffers' })
 vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -228,6 +237,7 @@ end, { desc = '[/] Fuzzily search in current buffer' })
 -- vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
 vim.keymap.set('n', '<C-p>', require('telescope.builtin').git_files, { desc = 'Search Git files' })
 vim.keymap.set('n', '<leader>f', require('telescope.builtin').find_files, { desc = 'Search [F]iles' })
+-- ["<leader>fa"] = { "<cmd> Telescope find_files follow=true no_ignore=true hidden=true <CR>", "Find all" },
 vim.keymap.set('n', '<leader>H', require('telescope.builtin').help_tags, { desc = 'Search [H]elp' })
 vim.keymap.set('n', '<leader>*', require('telescope.builtin').grep_string,
   { desc = 'Search word under cursor in multiple files' })
@@ -369,6 +379,7 @@ local servers = {
 
   lua_ls = {
     Lua = {
+      completion = { workspaceWord = false, showWord = "Disable" }, -- To disable "Text" suggestions with lua_ls
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
     },
@@ -408,7 +419,14 @@ require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
 cmp.setup {
-  snippet = {
+  window = {
+    completion = { pumheight = 5 },
+  },
+  -- window = {
+  --   -- completion = cmp.config.window.bordered(),
+  --   -- documentation = cmp.config.window.bordered(),
+  -- },
+  snippet = { -- Specify a snippet engine
     expand = function(args)
       luasnip.lsp_expand(args.body)
     end,
@@ -419,23 +437,20 @@ cmp.setup {
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete {},
-    ['<CR>'] = cmp.mapping.confirm {
+    ['<Tab>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
-    ['<Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_next_item()
-      elseif luasnip.expand_or_locally_jumpable() then
+    ['<Esc>'] = cmp.mapping.abort(),
+    ['<C-l>'] = cmp.mapping(function(fallback)
+      if luasnip.expand_or_locally_jumpable() then
         luasnip.expand_or_jump()
       else
         fallback()
       end
     end, { 'i', 's' }),
     ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if cmp.visible() then
-        cmp.select_prev_item()
-      elseif luasnip.locally_jumpable(-1) then
+      if luasnip.locally_jumpable(-1) then
         luasnip.jump(-1)
       else
         fallback()
@@ -447,6 +462,7 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
+
 
 
 -- The line beneath this is called `modeline`. See `:help modeline`

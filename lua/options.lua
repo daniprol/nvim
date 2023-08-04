@@ -5,6 +5,7 @@
 -- vim.wo means "Windows options"
 vim.o.hlsearch = false -- Highlight all matches when searching
 
+vim.o.pumheight = 15
 -- vim.wo.number = true -- WHY WINDOW OPTION HERE???
 -- vim.wo.relativenumber = true
 vim.o.number = true
@@ -43,6 +44,11 @@ vim.o.splitbelow = true   -- Horizontal split to the bottom
 -- vim.o.lazyredraw = true       -- Faster scrolling
 -- vim.o.synmaxcol = 240         -- Max column for syntax highlight
 
+-- HIGHTLIGHT OPTIONS FOR INDENT-BLANKLINE PLUGIN
+-- vim.cmd [[highlight IndentBlanklineIndent1 guifg=#45475a gui=nocombine]]
+-- vim.cmd [[highlight IndentBlanklineChar guifg=#00FF00 gui=nocombine]] -- Default value
+-- vim.cmd [[highlight IndentBlanklineChar guifg=#ffe6e6 gui=nocombine]]
+vim.cmd [[highlight IndentBlanklineContextChar guifg=#ffe6e6 gui=nocombine]]
 
 -- LINUX CLIPBOARD
 if vim.fn.has("unix") == 1 then
