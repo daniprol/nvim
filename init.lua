@@ -19,8 +19,6 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath,
   }
 end
-
-
 -- print('Adding lazy to path: ' .. lazypath)
 vim.opt.rtp:prepend(lazypath)
 -- :lua print(vim.inspect(vim.api.nvim_list_runtime_paths()))
@@ -28,6 +26,11 @@ vim.opt.rtp:prepend(lazypath)
 -- USE vim.o to just get variables and print them. Use vim.opt to access other methods in the metatable
 -- print('Current run time path: ' .. vim.o.runtimepath)
 
+--  You can configure plugins using the `config` key.
+--
+--  You can also configure plugins after the setup call,
+--    as they will be available in your neovim runtime.
+--
 -- NOTE: lazy.nvim doesn't support reloading your conf (source %).
 -- When adding "keys" you may need to reopen nvim to apply changes
 require('lazy').setup({
@@ -41,6 +44,7 @@ require('lazy').setup({
   -- checker = { enabled = true }, -- automatically check for plugin updates
   performance = {
     rtp = {
+      -- disable some rtp plugins
       disabled_plugins = require('disable_plugins')
     },
   },
@@ -66,7 +70,6 @@ require('lazy').setup({
 
         -- Useful status updates for LSP
         -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-        -- Add event = "LspAttach"  if you want the plugin to load on that event
         { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
 
         -- Additional lua configuration, makes nvim stuff amazing!
@@ -105,10 +108,10 @@ require('lazy').setup({
           changedelete = { text = '~' },
         },
         on_attach = function(bufnr)
-          vim.keymap.set('n', '<leader>gp', require('gitsigns').prev_hunk,
-            { buffer = bufnr, desc = '[G]o to [P]revious Hunk' })
-          vim.keymap.set('n', '<leader>gn', require('gitsigns').next_hunk,
-            { buffer = bufnr, desc = '[G]o to [N]ext Hunk' })
+          vim.keymap.set('n', '[h', require('gitsigns').prev_hunk,
+            { buffer = bufnr, desc = 'Go to Previous [H]unk' })
+          vim.keymap.set('n', ']h', require('gitsigns').next_hunk,
+            { buffer = bufnr, desc = 'Go to Next [H]unk' })
           vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk,
             { buffer = bufnr, desc = '[P]review [H]unk' })
         end,
@@ -117,6 +120,7 @@ require('lazy').setup({
 
 
     {
+      -- Set lualine as statusline
       'nvim-lualine/lualine.nvim',
       -- See `:help lualine.txt`
       opts = {
@@ -137,17 +141,11 @@ require('lazy').setup({
       -- Enable `lukas-reineke/indent-blankline.nvim`
       -- See `:help indent_blankline.txt`
       opts = {
-        -- char = '┊',
-        show_current_context = true,
-        show_current_context_start = false,
+        char = '┊',
         show_trailing_blankline_indent = false,
-        -- char_highlight_list = { 'IndentBlanklineIndent1' },
-        -- char_highlight_list = { '56' },
-        -- vim.fn.synIDattr(vim.fn.synIDtrans(vim.fn.hlID "Whitespace"), "fg", "gui"),
-        filetype_exclude = { 'help', 'nvimtree', 'dashboard', 'neo-tree' },
-        buftype_exclude = { 'terminal', 'nofile', 'quickfix' },
       },
     },
+
     -- "gc" to comment visual regions/lines
     { 'numToStr/Comment.nvim',         opts = {} },
 
@@ -192,7 +190,8 @@ require('lazy').setup({
   }
 })
 
--- ADD CUSTOM KEYMAPPINGS
+
+-- [[ Basic Keymaps ]]
 require('keymaps')
 
 -- [[ Highlight on yank ]]
@@ -207,42 +206,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- [[ Configure Telescope ]]
--- See `:help telescope` and `:help telescope.setup()`
-require('telescope').setup {
-  defaults = {
-    mappings = {
-      i = {
-        ['<C-u>'] = false,
-        ['<C-d>'] = false,
-      },
-    },
-  },
-}
-
-
--- Enable telescope fzf native, if installed
-pcall(require('telescope').load_extension, 'fzf')
-
--- See `:help telescope.builtin`
-vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
--- vim.keymap.set('n', '<leader>b', require('telescope.builtin').buffers, { desc = 'Find existing [B]uffers' })
-vim.keymap.set('n', '<leader>/', function()
-  -- You can pass additional configuration to telescope to change theme, layout, etc.
-  require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
-    winblend = 10,
-    previewer = false,
-  })
-end, { desc = '[/] Fuzzily search in current buffer' })
-
--- vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
-vim.keymap.set('n', '<C-p>', require('telescope.builtin').git_files, { desc = 'Search Git files' })
-vim.keymap.set('n', '<leader>f', require('telescope.builtin').find_files, { desc = 'Search [F]iles' })
--- ["<leader>fa"] = { "<cmd> Telescope find_files follow=true no_ignore=true hidden=true <CR>", "Find all" },
-vim.keymap.set('n', '<leader>H', require('telescope.builtin').help_tags, { desc = 'Search [H]elp' })
-vim.keymap.set('n', '<leader>*', require('telescope.builtin').grep_string,
-  { desc = 'Search word under cursor in multiple files' })
-vim.keymap.set('n', '<leader>g', require('telescope.builtin').live_grep, { desc = 'Search with [G]rep' })
-vim.keymap.set('n', '<leader>D', require('telescope.builtin').diagnostics, { desc = 'Search [D]iagnostics' })
+require('telescope_conf')
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -319,6 +283,12 @@ vim.keymap.set('n', '<leader>d', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- [[ Configure LSP ]]
 --  Function that is executed when LSP connects to specific buffer
 local on_attach = function(_, bufnr)
+  -- NOTE: Remember that lua is a real programming language, and as such it is possible
+  -- to define small helper and utility functions so you don't have to repeat yourself
+  -- many times.
+  --
+  -- In this case, we create a function that lets us more easily define mappings specific
+  -- for LSP related items. It sets the mode, buffer and description for us each time.
   local nmap = function(keys, func, desc)
     if desc then
       desc = 'LSP: ' .. desc
@@ -373,7 +343,6 @@ local servers = {
 
   lua_ls = {
     Lua = {
-      completion = { workspaceWord = false, showWord = "Disable" }, -- To disable "Text" suggestions with lua_ls
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
     },
@@ -413,14 +382,7 @@ require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
 cmp.setup {
-  window = {
-    completion = { pumheight = 5 },
-  },
-  -- window = {
-  --   -- completion = cmp.config.window.bordered(),
-  --   -- documentation = cmp.config.window.bordered(),
-  -- },
-  snippet = { -- Specify a snippet engine
+  snippet = {
     expand = function(args)
       luasnip.lsp_expand(args.body)
     end,
@@ -431,20 +393,23 @@ cmp.setup {
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
     ['<C-Space>'] = cmp.mapping.complete {},
-    ['<Tab>'] = cmp.mapping.confirm {
+    ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
     },
-    ['<Esc>'] = cmp.mapping.abort(),
-    ['<C-l>'] = cmp.mapping(function(fallback)
-      if luasnip.expand_or_locally_jumpable() then
+    ['<Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif luasnip.expand_or_locally_jumpable() then
         luasnip.expand_or_jump()
       else
         fallback()
       end
     end, { 'i', 's' }),
     ['<S-Tab>'] = cmp.mapping(function(fallback)
-      if luasnip.locally_jumpable(-1) then
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.locally_jumpable(-1) then
         luasnip.jump(-1)
       else
         fallback()
@@ -456,7 +421,6 @@ cmp.setup {
     { name = 'luasnip' },
   },
 }
-
 
 
 -- The line beneath this is called `modeline`. See `:help modeline`

@@ -16,9 +16,9 @@ vim.keymap.set('n', '<leader>j', '<C-w>j', { silent = true })
 vim.keymap.set('n', '<leader>k', '<C-w>k', { silent = true })
 vim.keymap.set('n', '<leader>l', '<C-w>l', { silent = true })
 
--- Move between tabs
-vim.keymap.set('n', '<S-l>', function() vim.cmd.bnext() end, { silent = true })
-vim.keymap.set('n', '<S-h>', function() vim.cmd.bprevious() end, { silent = true })
+-- Move between buffers
+vim.keymap.set('n', 'L', function() vim.cmd.bnext() end, { silent = true })
+vim.keymap.set('n', 'H', function() vim.cmd.bprevious() end, { silent = true })
 -- TODO: add mapping to :bfirst and :blast
 
 -- Resize splits
