@@ -21,6 +21,11 @@ vim.keymap.set('n', 'L', function() vim.cmd.bnext() end, { silent = true })
 vim.keymap.set('n', 'H', function() vim.cmd.bprevious() end, { silent = true })
 -- TODO: add mapping to :bfirst and :blast
 
+-- Move between tabs:
+-- NOTE: gT and gt are overwritten in some buffers by LSP
+vim.keymap.set("n", "<M-l>", function() vim.cmd.tabnext() end, { silent = true })
+vim.keymap.set("n", "<M-h>", function() vim.cmd.tabprevious() end, { silent = true })
+
 -- Resize splits
 vim.keymap.set('n', '<C-right>', function() vim.cmd('vertical resize +5<cr>') end, { silent = true })
 vim.keymap.set('n', '<C-left>', '<cmd>vertical resize -5<cr>', { silent = true })
