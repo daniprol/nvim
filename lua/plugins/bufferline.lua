@@ -15,6 +15,14 @@ return {
       right_mouse_command = function(n) require("mini.bufremove").delete(n, false) end,
       diagnostics = "nvim_lsp",
       always_show_bufferline = true,
+      -- custom_filter = function(buf_number)
+      --   -- This will group buffers that share the same CWD
+      --   -- Works great if you open Vim-dadbod-ui in a new tab (:tab DBUI)
+      --   -- But it will not work correctly if you open a buffer with fzf-lua
+      --   if not not vim.api.nvim_buf_get_name(buf_number):find(vim.fn.getcwd(), 0, true) then
+      --     return true
+      --   end
+      -- end,
       -- diagnostics_indicator = function(_, _, diag)
       --   local icons = require("lazyvim.config").icons.diagnostics
       --   local ret = (diag.error and icons.Error .. diag.error .. " " or "")

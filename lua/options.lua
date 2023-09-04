@@ -96,3 +96,24 @@ end
 -- ]],
 --   true
 -- )
+
+-- File extensions to ignore when performing TAB completion, functions like glob(), vimgrep, ...
+vim.opt.wildignore = {
+   '*.o',
+   '*.obj,*~',
+   '*.git*',
+   '*.meteor*',
+   '*vim/backups*',
+   '*sass-cache*',
+   '*mypy_cache*',
+   '*__pycache__*',
+   '*cache*',
+   '*logs*',
+   '*node_modules*',
+   '**/node_modules/**',
+   '*DS_Store*',
+   'venv',
+   '*.gem',
+   'log/**',
+   'tmp/**',
+}
