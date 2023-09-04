@@ -56,6 +56,25 @@ require('lazy').setup({
 
     -- Detect tabstop and shiftwidth automatically
     'tpope/vim-sleuth',
+    'tpope/vim-dotenv', -- Load env file with :Dotenv {file} , :verbose Dotenv
+    -- You can pass a range or the whole buffer as a query
+    -- :%DB mysql://root@localhost/bazquux
+    -- You can also pass a file as input:
+    -- :DB mongodb:///test < big_query.js
+    'tpope/vim-dadbod',
+    {
+      'kristijanhusak/vim-dadbod-ui',
+      dependencies = { "tpope/vim-dadbod" },
+      -- ft = { 'sql' }, -- Lazy load after specific filetype is opened (plugin will remain opened after that)
+      config = function()
+        -- vim.g.db_ui_disable_mappings = 1
+        vim.g.db_ui_win_position = 'right'
+        vim.g.db_ui_use_nerd_fonts = 1
+        vim.keymap.set("n", "<leader>db", vim.cmd.DBUIToggle, { desc = "Toggle [DB] UI" })
+      end
+    },
+    -- {'kristijanhusak/vim-dadbod-completion'},
+    -- dependencies = { 'kristijanhusak/vim-dadbod-ui'},
 
 
     -- NOTE: This is where your plugins related to LSP can be installed.
@@ -90,6 +109,9 @@ require('lazy').setup({
 
         -- Adds a number of user-friendly snippets
         'rafamadriz/friendly-snippets',
+
+        -- SQL completions
+        'kristijanhusak/vim-dadbod-completion'
       },
     },
 
@@ -439,6 +461,17 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
+    { name = 'vim-dadbod-completion' },
+  },
+  formatting = {
+    format = function(entry, vim_item)
+      vim_item.menu = ({
+        -- nvim_lsp = '[LSP]',
+        -- vsnip = '[Snippet]',
+        ['vim-dadbod-completion'] = '[DB]',
+      })[entry.source.name]
+      return vim_item
+    end,
   },
 }
 
