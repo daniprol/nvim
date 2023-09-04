@@ -95,6 +95,11 @@ require('lazy').setup({
         'folke/neodev.nvim',
       },
     },
+    {
+      'windwp/nvim-autopairs',
+      event = "InsertEnter",
+      opts = {} -- this is equalent to setup({}) function
+    },
 
     {
       -- Autocompletion
@@ -168,8 +173,19 @@ require('lazy').setup({
       },
     },
 
-    -- "gc" to comment visual regions/lines
-    { 'numToStr/Comment.nvim',         opts = {} },
+    {
+      'numToStr/Comment.nvim',
+      config = function()
+        require("Comment").setup()
+
+        -- ADD MAPPINGS TO GET VSCODE BEHAVIOR
+        -- Toggle comment in current line
+        vim.keymap.set('n', '<C-\\>', '<Plug>(comment_toggle_linewise_current)')
+
+        -- Toggle comment in current selection (LINEWISE)
+        vim.keymap.set('x', '<C-\\>', '<Plug>(comment_toggle_linewise_visual)')
+      end
+    },
 
     -- Fuzzy Finder (files, lsp, etc)
     { 'nvim-telescope/telescope.nvim', branch = '0.1.x', dependencies = { 'nvim-lua/plenary.nvim' } },
@@ -221,7 +237,7 @@ require('keymaps')
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
-    vim.highlight.on_yank()
+    vim.highlight.on_yank({ timeout = 120 })
   end,
   group = highlight_group,
   pattern = '*',
@@ -234,7 +250,7 @@ require('telescope_conf')
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'lua', 'python', 'tsx', 'typescript', 'vimdoc', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'lua', 'python', 'tsx', 'typescript', 'vimdoc', 'vim', 'sql' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
@@ -475,6 +491,12 @@ cmp.setup {
   },
 }
 
+-- If you want insert `(` after select function or method item
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done()
+)
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
