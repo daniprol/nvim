@@ -1,7 +1,3 @@
--- [[ Basic Keymaps ]]
---  TODO: check lunarvim keymappings
-
--- Keymaps for better default experience
 -- See `:help vim.keymap.set()`
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
@@ -63,3 +59,7 @@ vim.keymap.set('n', '<F1>', '<cmd>e ~/.config/nvim/init.lua<cr>', { silent = fal
 
 -- Add keymap for vim.api.lsp.buf.format()
 -- Also use :Format command in buffers where LSP is attached
+
+-- Toggle Quickfix list (only if it contains items)
+vim.keymap.set('n', '<leader>q', function() require('quickfix').toggle_qf() end,
+   { silent = true, desc = 'Toggle [Q]uickfix list' })

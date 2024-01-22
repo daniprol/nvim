@@ -7,9 +7,9 @@ return {
   'neovim/nvim-lspconfig',
   config = function()
     -- Switch for controlling whether you want autoformatting.
-    --  Use :KickstartFormatToggle to toggle autoformatting on or off
+    --  Use :FormatToggle to toggle autoformatting on or off
     local format_is_enabled = true
-    vim.api.nvim_create_user_command('KickstartFormatToggle', function()
+    vim.api.nvim_create_user_command('FormatToggle', function()
       format_is_enabled = not format_is_enabled
       print('Setting autoformatting to: ' .. tostring(format_is_enabled))
     end, {})
@@ -60,8 +60,25 @@ return {
               return
             end
 
+            -- TEMPORAL: organize imports with Ruff's code actions
+            -- Alternative: use isort with none-ls
+            -- Check https://github.com/astral-sh/ruff-lsp/issues/95
+            -- if client.name == "ruff_lsp" then
+            --   vim.lsp.buf.code_action {
+            --     apply = true,
+            --     context = {
+            --       only = { 'source.organizeImports' },
+            --       diagnostics = {},
+            --     },
+            --   }
+            --   vim.wait(100)
+            -- end
+
             vim.lsp.buf.format {
               async = false,
+              -- filter = function(_client)
+              --   return _client.name == 'null-ls'
+              -- end,
               filter = function(c)
                 return c.id == client.id
               end,
