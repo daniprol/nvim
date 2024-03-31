@@ -540,10 +540,13 @@ cmp.setup({
         --  NOTE: <Tab> still gives problems in snippets when it shows autocompletion
         --  IDEA: use <CR> to jump to next completion with the snippet
         ['<Tab>'] = cmp.mapping(function(fallback)
-            if luasnip.expand_or_locally_jumpable() then
-                luasnip.expand_or_jump()
+            local copilot = require 'copilot.suggestion'
+            if copilot.is_visible() then
+                copilot.accept()
             elseif cmp.visible() then
-                cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
+                cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true }) -- This accepts the first option by default
+            elseif luasnip.expand_or_locally_jumpable() then                          -- This might not be ideal if copilot keeps suggesting things
+                luasnip.expand_or_jump()
             else
                 fallback()
             end
