@@ -51,7 +51,6 @@ require('lazy').setup({
     spec = {
         -- FIST START WITH PLUGINS THAT DO NOT REQUIRE CONFIGURATION
         -- GIT PLUGINS
-        'tpope/vim-fugitive',
         'tpope/vim-rhubarb',
 
         -- Detect tabstop and shiftwidth automatically
@@ -129,26 +128,6 @@ require('lazy').setup({
 
         -- Useful plugin to show you pending keybinds.
         -- { 'folke/which-key.nvim', opts = {} },
-        {
-            -- Adds git related signs to the gutter, as well as utilities for managing changes
-            'lewis6991/gitsigns.nvim',
-            -- Usefule commands :Gitsigns toggle_current_line_blame
-            opts = {
-                -- See `:help gitsigns.txt`
-                signs = {
-                    add = { text = '+' },
-                    change = { text = '~' },
-                    delete = { text = '_' },
-                    topdelete = { text = '‾' },
-                    changedelete = { text = '~' },
-                },
-                on_attach = function(bufnr)
-                    vim.keymap.set('n', '[h', require('gitsigns').prev_hunk, { buffer = bufnr, desc = 'Go to Previous [H]unk' })
-                    vim.keymap.set('n', ']h', require('gitsigns').next_hunk, { buffer = bufnr, desc = 'Go to Next [H]unk' })
-                    vim.keymap.set('n', '<leader>ph', require('gitsigns').preview_hunk, { buffer = bufnr, desc = '[P]review [H]unk' })
-                end,
-            },
-        },
 
         {
             -- Set lualine as statusline
