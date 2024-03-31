@@ -522,12 +522,10 @@ cmp.setup({
         end,
     },
     mapping = cmp.mapping.preset.insert({
+        -- ALTERNATIVE: try <C-j> and <C-k> for scrolling
         ['<C-n>'] = cmp.mapping.select_next_item(),
         ['<C-p>'] = cmp.mapping.select_prev_item(),
-        -- ['<C-j>'] = cmp.mapping.select_next_item(),
-        -- ['<C-k>'] = cmp.mapping.select_prev_item(),
-        -- ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        -- ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        -- ALTERNATIVE: try <C-d> and <C-u> for scrolling
         ['<C-k>'] = cmp.mapping.scroll_docs(-4),
         ['<C-j>'] = cmp.mapping.scroll_docs(4),
         ['<C-Space>'] = cmp.mapping.complete({}),
@@ -540,6 +538,7 @@ cmp.setup({
         --   select = true,
         -- },
         --  NOTE: <Tab> still gives problems in snippets when it shows autocompletion
+        --  IDEA: use <CR> to jump to next completion with the snippet
         ['<Tab>'] = cmp.mapping(function(fallback)
             if luasnip.expand_or_locally_jumpable() then
                 luasnip.expand_or_jump()
