@@ -52,6 +52,7 @@ return {
 
         -- Create an autocmd that will run *before* we save the buffer.
         --  Run the formatting command for the LSP that has just attached.
+        --  Idea: run vim.lsp.buf.format() when the buffer is saved.
         vim.api.nvim_create_autocmd('BufWritePre', {
           group = get_augroup(client),
           buffer = bufnr,
@@ -60,19 +61,19 @@ return {
               return
             end
 
-            -- TEMPORAL: organize imports with Ruff's code actions
+            -- NOTE: import sorting in ruff is part of the linter (ruff check --fix) and not the formatter (ruff format)
             -- Alternative: use isort with none-ls
             -- Check https://github.com/astral-sh/ruff-lsp/issues/95
-            -- if client.name == "ruff_lsp" then
-            --   vim.lsp.buf.code_action {
-            --     apply = true,
-            --     context = {
-            --       only = { 'source.organizeImports' },
-            --       diagnostics = {},
-            --     },
-            --   }
-            --   vim.wait(100)
-            -- end
+            if client.name == "ruff_lsp" then
+              vim.lsp.buf.code_action {
+                apply = true,
+                context = {
+                  only = { 'source.organizeImports' },
+                  diagnostics = {},
+                },
+              }
+              vim.wait(100)
+            end
 
             vim.lsp.buf.format {
               async = false,
