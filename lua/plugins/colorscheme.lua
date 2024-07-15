@@ -2,13 +2,17 @@ return {
   -- tokyonight
   {
     "folke/tokyonight.nvim",
+    enabled = false,
     lazy = true,
     opts = { style = "moon" },
   },
+  -- { 'Mofiqul/vscode.nvim', lazy = true, priority = 1000, config = function() vim.cmd 'colorscheme vscode' end },
+  { "EdenEast/nightfox.nvim", lazy = false, priority = 1000, config = function() vim.cmd("colorscheme carbonfox") end },
   {
     -- Theme inspired by Atom
     'navarasu/onedark.nvim',
     lazy = true,
+    enabled = false,
     -- priority = 1000,
     -- config = function()
     --   vim.cmd.colorscheme 'onedark'
@@ -18,6 +22,7 @@ return {
   {
     "catppuccin/nvim",
     -- Set priority and lazy = false to the default colorscheme
+    enabled = false,
     lazy = false,
     priority = 1000,
     config = function()

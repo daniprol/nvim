@@ -92,7 +92,7 @@ require('lazy').setup({
 
                 -- Useful status updates for LSP
                 -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-                { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+                { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
 
                 -- Additional lua configuration, makes nvim stuff amazing!
                 'folke/neodev.nvim',
@@ -136,7 +136,8 @@ require('lazy').setup({
             opts = {
                 options = {
                     icons_enabled = true,
-                    theme = 'onedark', -- Green colors look better
+                    -- theme = 'onedark', -- Green colors look better
+                    theme = 'carbonfox', -- Green colors look better
                     -- theme = 'catppuccin', -- It will pick up the flavor automatically
                     -- theme = vim.g.colors_name,
                     component_separators = '|',
@@ -165,9 +166,11 @@ require('lazy').setup({
                 -- ADD MAPPINGS TO GET VSCODE BEHAVIOR
                 -- Toggle comment in current line
                 vim.keymap.set('n', '<C-\\>', '<Plug>(comment_toggle_linewise_current)')
-
+                vim.keymap.set('n', '<C-/>', '<Plug>(comment_toggle_linewise_current)')
+                -- Use vim.fn.has 'win32' == 0  to add OS specific configuration
                 -- Toggle comment in current selection (LINEWISE)
                 vim.keymap.set('x', '<C-\\>', '<Plug>(comment_toggle_linewise_visual)')
+                vim.keymap.set('x', '<C-/>', '<Plug>(comment_toggle_linewise_visual)')
             end,
         },
 
@@ -313,14 +316,15 @@ vim.keymap.set('n', '<leader>d', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- [[ Configure LSP ]]
 --  Function that is executed when LSP connects to specific buffer
 local on_attach = function(client, bufnr)
-    if client.name == 'ruff_lsp' then
+    -- Ruff-lsp is the old one, now we use ruff-server (builtin)
+    if client.name == 'ruff' then
         client.server_capabilities.hoverProvider = false -- Use PyRight instead
         -- elseif client.name == 'pyright' then
         -- PROBLEM: pyright doesnt have this option!
         -- client.server_capabilities.publishDiagnostics = false
     elseif client.name == 'lua_ls' then
-        client.server_capabilities.documentFormattingProvider = false -- In case you want to use stylua with none-ls
-        client.server_capabilities.documentRangeFormattingProvider = false
+        client.server_capabilities.documentFormattingProvider = true -- In case you want to use stylua with none-ls
+        client.server_capabilities.documentRangeFormattingProvider = true
     end
 
     local nmap = function(keys, func, desc)
@@ -371,11 +375,12 @@ local on_attach = function(client, bufnr)
         vim.lsp.buf.format()
     end, { desc = 'Format current buffer with LSP' })
 
+    -- NOTE: when calling `:lua vim.lsp.buf.format()` it formats the entire file, but with the next keymap you can format just a range
+    -- :<range>Format doesn't work either!
     vim.keymap.set({ 'n', 'v' }, '<leader>fo', vim.lsp.buf.format, { desc = '[F][O]rmat file' })
+    --   vim.lsp.buf.format { async = true } -- Async doesnt work as expected
+
     -- NOTE: you can apply range formatting with 'gq' as well
-    -- vim.keymap.set('n', '<leader>fo', function()
-    --   vim.lsp.buf.format { async = true }
-    -- end, { desc = '[F][O]rmat file' })
 
     -- Correctly illuminate cmp suggestions
     require('illuminate').on_attach(client)
@@ -392,9 +397,17 @@ end
 local servers = {
     -- clangd = {},
     -- gopls = {},
+    ruff = {
+        settings = {
+            organizeImports = true,
+        },
+
+    },
+    taplo = {},
     pyright = {
         pyright = {
             autoImportCompletion = true,
+            disableOrganizeImports = true, -- Use Ruff instead
         },
         python = {
             analysis = {
@@ -406,13 +419,15 @@ local servers = {
                 -- diagnosticSeverityOverrides = {
                 --   reportUnusedVariable = "warning", -- or anything
                 -- }
+                -- Ignore all files for analysis to exclusively use Ruff for linting
+                -- ignore = { '*' },
                 useLibraryCodeForTypes = true,
                 typeCheckingMode = 'off',
             },
         },
     },
     -- rust_analyzer = {},
-    -- tsserver = {},
+    tsserver = {},
     -- html = { filetypes = { 'html', 'twig', 'hbs'} },
 
     lua_ls = {
@@ -440,6 +455,7 @@ require('neodev').setup()
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
+require("mason").setup()
 -- Ensure the servers above are installed
 -- Mason LSPconfig also adds the commands :LspInstall and :LspUninstall
 local mason_lspconfig = require('mason-lspconfig')
@@ -483,6 +499,18 @@ mason_lspconfig.setup_handlers({
             },
             -- Useful :=require('lspconfig')['pyright'].handlers
             -- Also :=require('lspconfig').util.default_config
+
+            -- IMPORTANT: for pyright to recognize a pyenv-virtualenv you need to either:
+            -- 1. pyenv shell <envname>
+            -- 2. Add pyrightconfig.json:
+            --{
+            --      -- {
+            -- "venvPath": "/home/daniprol/.pyenv/versions/",
+            -- "venv": "ENVNAME"
+            -- }
+            -- 3. Other hack: vim.env.PYENV_VERSION = vim.fn.system('pyenv version'):match('(%S+)%s+%(.-%)')
+            -- TODO: check plugin venv-selector
+
         })
     end,
 })

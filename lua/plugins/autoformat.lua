@@ -64,16 +64,16 @@ return {
             -- NOTE: import sorting in ruff is part of the linter (ruff check --fix) and not the formatter (ruff format)
             -- Alternative: use isort with none-ls
             -- Check https://github.com/astral-sh/ruff-lsp/issues/95
-            if client.name == "ruff_lsp" then
-              vim.lsp.buf.code_action {
-                apply = true,
-                context = {
-                  only = { 'source.organizeImports' },
-                  diagnostics = {},
-                },
-              }
-              vim.wait(100)
-            end
+            -- if client.name == "ruff_lsp" then
+            --   vim.lsp.buf.code_action {
+            --     apply = true,
+            --     context = {
+            --       only = { 'source.organizeImports' },
+            --       diagnostics = {},
+            --     },
+            --   }
+            --   vim.wait(100)
+            -- end
 
             vim.lsp.buf.format {
               async = false,
