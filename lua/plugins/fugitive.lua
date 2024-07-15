@@ -1,8 +1,8 @@
 return {
   'tpope/vim-fugitive',
   keys = {
-    { '<leader>gs', function() vim.cmd('vert Git') end, desc = 'Open [G]it [S]tatus in vertical split' },
-    { '<leader>gv', ':Gvdiffsplit ',                    desc = 'Open [G]it [V]ertical diff split' }
+    { '<leader>gv', function() vim.cmd('vert Git | wincmd L | vert resize -65') end, desc = 'Open [G]it status [V]ertical split' },
+    { '<leader>gs', function() vim.cmd('Git | wincmd J | resize -10') end,           desc = 'Open [G]it status Hori[S]ontal split' }
   },
   -- Settings for default split size:
   config = function()
@@ -10,13 +10,9 @@ return {
     -- vim.api.nvim_create_user_command("Gs", function()
     --   vim.cmd("vertical G")
     -- end, { desc = 'Open [G]it [S]tatus in vertical split' })
-    -- Change default size of split:
-    vim.g.fugitive_status_vertical = 30
 
     -- Add keymap for git blame
     -- vim.keymap.set('n', '<leader>gb', '<cmd>Git blame<cr>', { silent = true, desc = 'Git [B]lame' })
-    --
-    vim.keymap.set('n', '<leader>gd', '<cmd>Git diff<cr>', { silent = true, desc = 'Git [D]iff' })
     --
     vim.keymap.set('n', '<leader>gl', function() vim.cmd('Git log --oneline') end,
       { silent = true, desc = 'Git [L]og oneline' })
