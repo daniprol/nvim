@@ -18,8 +18,14 @@ return {
       { silent = true, desc = 'Git [L]og oneline' })
 
     -- ALTERNATIVE: instead of using 2 and 3 use HEAD and OTHER
-    vim.keymap.set('n', 'gh', '<cmd>diffget //2<cr>', { silent = true, desc = 'Git diffget HEAD (//2)' })
-    vim.keymap.set('n', 'gl', '<cmd>diffget //3<cr>', { silent = true, desc = 'Git diffget OTHER (//3)' })
+    -- vim.keymap.set('n', 'gh', '<cmd>diffget //2<cr>', { silent = true, desc = 'Git diffget HEAD (//2)' })
+    -- vim.keymap.set('n', 'gl', '<cmd>diffget //3<cr>', { silent = true, desc = 'Git diffget OTHER (//3)' })
+    vim.keymap.set('n', '<leader>go', '<cmd>diffget LOCAL<cr>',
+      { silent = true, desc = 'Git diff[G]et [O]urs (LOCAL //2)' })
+    vim.keymap.set('n', '<leader>gb', '<cmd>diffget BASE<cr>',
+      { silent = true, desc = 'Git diff[G]et [B]ase (BASE //1)' })
+    vim.keymap.set('n', '<leader>gt', '<cmd>diffget REMOTE<cr>',
+      { silent = true, desc = 'Git diff[G]et [T]heirs (REMOTE //3)' })
   end
 
 }
