@@ -13,6 +13,9 @@ local select_one_or_multi = function(prompt_bufnr)
    end
 end
 
+local actions = require('telescope.actions')
+local action_state = require('telescope.actions.state')
+
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
    defaults = {
@@ -42,6 +45,46 @@ require('telescope').setup {
          -- find_command = { "fd", "--type", "f", "--strip-cwd-prefix" }
          file_ignore_patterns = { ".git/" }
       },
+      git_commits = {
+         mappings = {
+            i = {
+               ["<C-d>"] = function() -- show diffview for the selected commit
+                  -- Open in diffview
+                  local entry = action_state.get_selected_entry()
+                  -- close Telescope window properly prior to switching windows
+                  actions.close(vim.api.nvim_get_current_buf())
+                  vim.cmd(("DiffviewOpen %s^!"):format(entry.value))
+               end,
+            },
+         },
+      },
+      git_bcommits = {
+         mappings = {
+            i = {
+               ["<C-d>"] = function() -- show diffview for the selected commit of current buffer
+                  -- Open in diffview
+                  local entry = action_state.get_selected_entry()
+                  -- close Telescope window properly prior to switching windows
+                  actions.close(vim.api.nvim_get_current_buf())
+                  vim.cmd(("DiffviewOpen %s^!"):format(entry.value))
+               end,
+            },
+         },
+      },
+      git_branches = {
+         mappings = {
+            i = {
+               ["<C-d>"] = function() -- show diffview comparing the selected branch with the current branch
+                  -- Open in diffview
+                  local entry = action_state.get_selected_entry()
+                  -- close Telescope window properly prior to switching windows
+                  actions.close(vim.api.nvim_get_current_buf())
+                  vim.cmd(("DiffviewOpen %s.."):format(entry.value))
+               end,
+            },
+         },
+      },
+
    },
    extensions = {
       -- lsp_handlers = {
@@ -82,7 +125,8 @@ vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc
 -- Search for hidden files and files included in the .gitignore as well
 vim.keymap.set('n', '<C-p>', function() require('telescope.builtin').find_files({ hidden = true }) end,
    { desc = 'Search [F]iles' })
-vim.keymap.set('n', '<leader>fa', function() require('telescope.builtin').find_files({ hidden = true, no_ignore = true }) end,
+vim.keymap.set('n', '<leader>fa',
+   function() require('telescope.builtin').find_files({ hidden = true, no_ignore = true }) end,
    { desc = 'Search [F]iles [A]ll' })
 -- TODO: add commands to find ALL files and grep within ALL files
 -- Telescope is slow for large directories use fzf-lua to search in ~/Projets

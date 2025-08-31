@@ -63,3 +63,7 @@ vim.keymap.set('n', '<F1>', '<cmd>e ~/.config/nvim/init.lua<cr>', { silent = fal
 -- Toggle Quickfix list (only if it contains items)
 vim.keymap.set('n', '<leader>q', function() require('quickfix').toggle_qf() end,
    { silent = true, desc = 'Toggle [Q]uickfix list' })
+
+-- vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+vim.keymap.set("n", "<C-f>", function() vim.fn.system("tmux neww tmux-sessionizer") end,
+   { silent = true, desc = 'Open tmux sessionizer' })

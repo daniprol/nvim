@@ -10,14 +10,14 @@ vim.o.pumheight = 15
 -- vim.wo.relativenumber = true
 vim.o.number = true
 vim.o.relativenumber = true
-vim.o.mouse = 'a' -- Enable mouse
+vim.o.mouse = 'a'               -- Enable mouse
 vim.o.clipboard = 'unnamedplus' -- Sync with OS clipboard (:help clipboard)
 vim.o.breakindent = true
-vim.o.undofile = true -- Save undo history (default undodir: ~/.local/state/nvim/undo )
+vim.o.undofile = true           -- Save undo history (default undodir: ~/.local/state/nvim/undo )
 vim.o.ignorecase = true
-vim.o.smartcase = true -- Case-insensitive searching UNLESS \C or capital in search
-vim.wo.signcolumn = 'yes' -- I guess signcolumn is used by gitsigns?
-vim.o.updatetime = 250 -- Reduce ms to wait for trigger an event
+vim.o.smartcase = true          -- Case-insensitive searching UNLESS \C or capital in search
+vim.wo.signcolumn = 'yes'       -- I guess signcolumn is used by gitsigns?
+vim.o.updatetime = 250          -- Reduce ms to wait for trigger an event
 vim.o.timeoutlen = 300
 -- Better completion:
 --  menuone: shows menu even when there is only 1 match
@@ -30,8 +30,8 @@ vim.o.termguicolors = true -- 24-bit RGB color for the terminal
 -- vim.o.showmatch = true        -- Highlight matching parenthesis
 -- vim.o.foldmethod = 'marker'   -- Enable folding (default 'foldmarker')
 vim.o.colorcolumn = '100' -- Line lenght marker at 80 columns
-vim.o.splitright = true -- Vertical split to the right
-vim.o.splitbelow = true -- Horizontal split to the bottom
+vim.o.splitright = true   -- Vertical split to the right
+vim.o.splitbelow = true   -- Horizontal split to the bottom
 -- vim.o.linebreak = true        -- Wrap on word boundary
 -- vim.o.laststatus=3            -- Set global statusline
 -- vim.o.expandtab = true        -- Use spaces instead of tabs
@@ -39,6 +39,20 @@ vim.o.splitbelow = true -- Horizontal split to the bottom
 -- vim.o.tabstop = 4             -- 1 tab == 4 spaces
 -- vim.o.smartindent = true      -- Autoindent new lines
 vim.opt.scrolloff = 3
+vim.opt.fillchars = {
+  -- fold = ' ',
+  -- diff = '╱',
+  diff = ' ',
+  -- wbr = '─',
+  -- msgsep = '─',
+  -- horiz = ' ',
+  -- horizup = '│',
+  -- horizdown = '│',
+  -- vertright = '│',
+  -- vertleft = '│',
+  -- verthoriz = '│',
+}
+
 
 -- vim.o.hidden = true           -- Enable background buffers
 -- vim.o.history = 100           -- Remember N lines in history

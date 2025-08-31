@@ -137,8 +137,8 @@ require('lazy').setup({
                 options = {
                     icons_enabled = true,
                     -- theme = 'onedark', -- Green colors look better
-                    theme = 'carbonfox', -- Green colors look better
-                    -- theme = 'catppuccin', -- It will pick up the flavor automatically
+                    -- theme = 'carbonfox', -- Green colors look better
+                    theme = 'catppuccin', -- It will pick up the flavor automatically
                     -- theme = vim.g.colors_name,
                     component_separators = '|',
                     section_separators = '',
@@ -325,6 +325,9 @@ local on_attach = function(client, bufnr)
     elseif client.name == 'lua_ls' then
         client.server_capabilities.documentFormattingProvider = true -- In case you want to use stylua with none-ls
         client.server_capabilities.documentRangeFormattingProvider = true
+    elseif client.name == 'tsserver' then
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
     end
 
     local nmap = function(keys, func, desc)
@@ -398,8 +401,33 @@ local servers = {
     -- clangd = {},
     -- gopls = {},
     ruff = {
-        settings = {
-            organizeImports = true,
+        init_options = {
+            settings = {
+                -- organizeImports = true,
+                -- args = { '--fix' },
+                -- configurationPreferences = 'filesystemFirst',
+                -- lineLength = 80, -- configure using editorconfig
+                -- fixAll = true,
+                -- showSyntaxErrors = true,
+                -- codeAction = {
+                --     disableRuleComment = { enable = true },
+                --     fixViolation = { enable = true },
+                -- },
+                lint = { enable = true, select = { 'I', 'AIR', 'PLW', 'PlR' }, preview = false },
+                -- format = { preview = false },
+            },
+            --     settings = {
+            --         organizeImports = true,
+            --     },
+            -- diagnostics = {
+            --     enable = true,
+            --     lint = {
+            --         enable = true,
+            --         -- Disable all linters and enable only the ones you want
+            --         -- disable = { 'all' },
+            --         enable = { 'flake8', 'mypy', 'pylint' },
+            --     },
+            -- },
         },
 
     },
@@ -426,6 +454,7 @@ local servers = {
             },
         },
     },
+    angularls = {},
     -- rust_analyzer = {},
     tsserver = {},
     -- html = { filetypes = { 'html', 'twig', 'hbs'} },
@@ -460,6 +489,7 @@ require("mason").setup()
 -- Mason LSPconfig also adds the commands :LspInstall and :LspUninstall
 local mason_lspconfig = require('mason-lspconfig')
 
+-- NOTE: it will install all language servers inside ~/.local/share/nvim/mason
 mason_lspconfig.setup({
     ensure_installed = vim.tbl_keys(servers),
 })
@@ -514,6 +544,32 @@ mason_lspconfig.setup_handlers({
         })
     end,
 })
+
+-- Custom LSP configuration for ty
+-- 1. Define the server, since it's not built-in to lspconfig
+require('lspconfig').configs.ty = {
+  default_config = {
+    cmd = { '/home/daniprol/.local/share/nvim/mason/packages/ty/venv/bin/ty', 'server' },
+    filetypes = { 'python' },
+    -- Use lspconfig's utility to find the project root matching these files
+    root_dir = require('lspconfig').util.root_pattern('.git', 'pyproject.toml', 'setup.py'),
+  },
+}
+
+-- 2. Now, we can set it up with our custom settings
+require('lspconfig').ty.setup {
+  on_attach = on_attach,
+  capabilities = capabilities,
+  settings = {
+    ty = {
+      disableFollowImports = true,
+      strict = true,
+      -- Other available options:
+      -- pythonVersion = "3.11",
+      -- pythonPath = "/path/to/your/python",
+    },
+  },
+}
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
